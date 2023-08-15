@@ -1,6 +1,14 @@
 import { render, screen, act } from "@testing-library/react";
+import { vi } from "vitest"
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+
+vi.spyOn(window, 'requestAnimationFrame').mockImplementation(
+  (callback) => {
+    callback(0);
+    return 0;
+  }
+);
 
 describe("Simple working test", () => {
   test("the title is visible", async () => {
