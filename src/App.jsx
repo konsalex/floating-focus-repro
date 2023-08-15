@@ -1,35 +1,41 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { FloatingFocusManager, useFloating, useClick, useInteractions } from '@floating-ui/react';
 import "./App.css";
 
 function App() {
-	const [count, setCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
-	return (
-		<>
-			<div>
-				<a href="https://vitejs.dev" target="_blank">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={() => setCount((count) => count + 1)}>
-					count is {count}
-				</button>
-				<p>
-					Edit <code>src/App.jsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">
-				Click on the Vite and React logos to learn more
-			</p>
-		</>
-	);
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+  });
+
+  const click = useClick(context);
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    click,
+  ]);
+
+  return (
+    <div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button data-testid="trigger" ref={refs.setReference} {...getReferenceProps()}>
+          Open Tip
+        </button>
+        {isOpen && (
+          <FloatingFocusManager context={context}>
+            <div ref={refs.setFloating}
+              style={floatingStyles}
+              {...getFloatingProps()}>
+              Elemenet rendered
+              <button data-testid="test" onClick={() => setIsOpen(false)}>Close</button>
+            </div>
+          </FloatingFocusManager>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default App;

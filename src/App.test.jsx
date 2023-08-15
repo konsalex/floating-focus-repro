@@ -1,18 +1,25 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
 describe("Simple working test", () => {
-	it("the title is visible", () => {
-		render(<App />);
-		expect(screen.getByText("Vite + React")).toBeInTheDocument();
-	});
+  test("the title is visible", async () => {
+    render(<App />);
 
-	it("should increment count on click", async () => {
-		render(<App />);
-		const counter = screen.getByRole("button", { name: /count is/i });
-		expect(counter.textContent).toBe("count is 0");
-		await userEvent.click(counter);
-		expect(counter.textContent).toBe("count is 1");
-	});
+    // Open the Tooltip
+    await userEvent.click(screen.getByTestId("trigger"));
+
+    await act(async () => { }); // Flush microtasks.
+
+    // Tooltip is rendered
+    expect(screen.getByTestId("trigger")).toBeInTheDocument();
+    expect(screen.getByTestId("test")).toBeInTheDocument();
+
+    // Close the tooltip again
+    await userEvent.click(screen.getByTestId("test"));
+    // console.log(container.innerHTML)
+
+    // Expect focus to go back to the trigger
+    expect(screen.getByTestId("trigger")).toHaveFocus()
+  });
 });
